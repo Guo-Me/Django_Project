@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('categroy_name', models.CharField(max_length=20)),
-                ('categroy_img', models.CharField(max_length=200)),
+                ('category_img', models.CharField(max_length=200)),
                 ('categroy_ordernum', models.IntegerField()),
                 ('categroy_pid', models.IntegerField()),
                 ('create_time', models.DateTimeField()),
