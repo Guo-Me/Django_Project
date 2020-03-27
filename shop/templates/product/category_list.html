@@ -3,49 +3,50 @@
 {% block content %}
 
     <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-{#          <div class="col-sm-6">#}
-{#            <h1 class="m-0 text-dark">商品分类添加</h1>#}
-{#          </div><!-- /.col -->#}
-          <div class="col-sm-12">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">首页</a></li>
-                <li class="breadcrumb-item "><a href="/product/category_list/">商品分类展示</a></li>
-                <li class="breadcrumb-item active">商品分类添加</li>
-            </ol>
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
+        <div class="container-fluid">
+            <div class="row mb-2">
+                {#          <div class="col-sm-6">#}
+                {#            <h1 class="m-0 text-dark">商品分类添加</h1>#}
+                {#          </div><!-- /.col -->#}
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">首页</a></li>
+                        <li class="breadcrumb-item "><a href="/product/category_list/">商品分类展示</a></li>
+                        <li class="breadcrumb-item active">商品分类添加</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
     </div>
-    <div class="card card-info card-outline" >
-    <div class="card-header with-border">
-        <a class="btn btn-primary" style="text-align: left" href="/product/category_add/">商品分类添加</a>
-    </div>
+    <div class="card card-info card-outline">
+        <div class="card-header with-border">
+            <a class="btn btn-primary" style="text-align: left" href="/product/category_add/">商品分类添加</a>
+        </div>
 
         <div class="card-body">
-    <table id="table" class="table table-bordered table-striped dataTable table-hover" role="grid"
-           aria-describedby="example1_info" style="width: 100%;">
-        <thead>
-        <tr role="row">
-            <th>序号
-            </th>
-            <th>分类名称
-            </th>
-            <th >排序号
-            </th>
-            <th >分类图片
-            </th>
-            <th>操作
+            <table id="table" class="table table-bordered table-striped dataTable table-hover" role="grid"
+                   aria-describedby="example1_info" style="width: 100%;">
+                <thead>
+                <tr role="row">
+                    <th></th>
+                    <th>序号
+                    </th>
+                    <th>分类名称
+                    </th>
+                    <th>排序号
+                    </th>
+                    <th>分类图片
+                    </th>
+                    <th>操作
 
-            </th>
-        </tr>
-        </thead>
-        <tbody>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
 
 
-        </tbody>
-    </table>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -56,82 +57,116 @@
 
     <script>
 
+    function del(id){
+        var r = confirm('确定要删除吗？');
+        if (r==true){
+            $.ajax({
+                    url: '/product/delete/',
+                    cache: false,
+                    type: 'post',
+                    data: {id: id},
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.state) {
+                            //toastr.success("删除成功");
+                            window.location.href='/product/category_list/'
+                        }
+                    },
+                    error:function () {
+                           toastr.warning("请求失败，请联系管理员");
+                        }
+                });
+        }
+
+
+    }
+
+
+
         $(function () {
 
             $('#table').DataTable({
 
-                "lengthChange":false,
-                "searching":false,
-                "ordering":false,
-                "info":false,
-                "autoWidth":true,
-                "processing":true,
-                "iDisplayLength":3,
-                "pagingType":"full_number",
-                "paging":false,
-                "language":{
-                    "processing":"数据加载中...",
-                    "lengthMenu":"显示 _Menu_ 项结果",
-                    "zerRecords":"没有匹配结果",
-                    "info":"显示第 START 至 END 项结果，共TOTAL 项",
-                    "emptyTable":"表中数据为空",
-                    "loadingRecords":"载入中..."
+                "lengthChange": false,
+                "searching": false,
+                "ordering": false,
+                "info": false,
+                "autoWidth": true,
+                "processing": true,
+                "iDisplayLength": 3,
+                "pagingType": "full_number",
+                "paging": false,
+                "language": {
+                    "processing": "数据加载中...",
+                    "lengthMenu": "显示 _Menu_ 项结果",
+                    "zerRecords": "没有匹配结果",
+                    "info": "显示第 START 至 END 项结果，共TOTAL 项",
+                    "emptyTable": "表中数据为空",
+                    "loadingRecords": "载入中..."
 
                 },
-                "serverSide":true, //开启服务端模式
-              /*  'treeGrid':{
-                    'left':15,
-                    "expandIcon":'',
-                    'collapseIcon':'',
-              }  */
-              "ajax":function (data,callback,settings) {
-                  var param = {};
-                  //param.pageSize=data.length;
-                  //param.pageNum =(data.start/data.length)+1;
-                  param.draw = data.draw;
-                  $.ajax({
+                "serverSide": true, //开启服务端模式
 
-                      type:"POST",
-                      url:"/product/category_list/",
-                      cache:false,
-                      data:param,
-                      dataType:"json",
-                      success:function (result) {
-                          setTimeout(function () {
-                              callback(result)
-                          },500)
+                "ajax": function (data, callback, settings) {
+                    var param = {};
+                    //param.pageSize=data.length;
+                    //param.pageNum =(data.start/data.length)+1;
+                    param.draw = data.draw;
+                    $.ajax({
 
-                      }
-                  });
+                        type: "POST",
+                        url: "/product/category_list/",
+                        cache: false,
+                        data: param,
+                        dataType: "json",
+                        success: function (result) {
+                            setTimeout(function () {
+                                callback(result)
+                            }, 500)
 
-              },
-                columns:[
-                  /*  {
-                        classname:'treegrid-control',
-                        data:function (data) {
-                            if(data.children.length>0){
-                                return '<span><i></i></span>'
-                            }
-                            return ''
                         }
-                    },*/
-                    {"data":"id"},
-                    {"data":"category_name"},
-                    {"data":"category_ordernum"},
-                    {"data":"category_img",
-                        render:function (data,type,row,meta) {
-                        return "<img src='"+'/upload/category_img/' + data + "  ' width=\"100px\" height=\"100px\" alt=\"\"/>";
-                        }  },
-                    {"data":function () {
-                            return '<button class="btn-primary  ">编辑</button> </br>' +
-                                '<button class="btn-primary btn-danger ">删除</button>'
-                        }}
+                    });
+
+                },
+
+                'treeGrid': {
+                    'left': 15,
+                    'expandAll': true,
+                    'expandIcon': '<span><i class="fa fa-plus-square"></i></span>',
+                    'collapseIcon': '<span><i class="fa fa-minus-square"></i></span>',
+
+
+                },
+                columns: [
+                    {
+                        className: 'treegrid-control',
+                        data: function (data) {
+                            if (data.children.length > 0) {
+                                return '<span><i class="fa fa-plus-square"></i></span>'
+                            }
+                            return '';
+                        }
+                    },
+                    {"data": "id"},
+                    {"data": "category_name"},
+                    {"data": "category_ordernum"},
+                    {
+                        "data": "category_img",
+                        render: function (data, type, row, meta) {
+                            return "<img src='" + '/upload/category_img/' + data + "  ' width=\"100px\" height=\"100px\" alt=\"\"/>";
+                        }
+                    },
+                    {//
+                        "data": "id",
+                        render: function (data, type, row, meta) {
+                            return '<a class="btn btn-primary" href=" ' + '/product/update/?id=' + data + '  "  alt="">编辑</a> </br>' +
+                                '<a id="del" class="btn btn-primary btn-danger"   onclick="del(' + data + ')"  >删除</a>'
+                        }
+                    }
 
                 ]
 
             })
-
-
 
 
         })
