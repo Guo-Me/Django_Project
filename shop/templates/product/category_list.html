@@ -156,11 +156,19 @@
                             return "<img src='" + '/upload/category_img/' + data + "  ' width=\"100px\" height=\"100px\" alt=\"\"/>";
                         }
                     },
-                    {//
-                        "data": "id",
-                        render: function (data, type, row, meta) {
-                            return '<a class="btn btn-primary" href=" ' + '/product/update/?id=' + data + '  "  alt="">编辑</a> </br>' +
-                                '<a id="del" class="btn btn-primary btn-danger"   onclick="del(' + data + ')"  >删除</a>'
+                    {
+
+                        data:function (data) {
+                         var html=   '<a class="btn btn-primary" href=" ' + '/product/update/?id=' + data['id'] + '  "  alt="">编辑</a> </br>' +
+                                '<a id="del" class="btn btn-primary btn-danger"   onclick="del(' + data['id'] + ')"  >删除</a>';
+                            if(data.children.length==0){//三级分类添加属性
+                                html+="<br>";
+                                html+="<br>";
+                                html+='<a class="btn btn-primary" href=" ' + '/product/add_attr/?category_id=' + data['id'] + '  "  alt="">属性设置</a> </br>' ;
+                                html+='<a id="g_set" class="btn btn-primary "   href=" ' + '/product/g_set/?category_id=' + data['id'] + '  "  >规格设置</a>';
+
+                            }
+                             return html
                         }
                     }
 

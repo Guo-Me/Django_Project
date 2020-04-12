@@ -6,6 +6,7 @@ import random
 import datetime
 import os
 import json
+import copy
 #48郭梦浩
 def category_list(request):
     if request.method =="GET":
@@ -87,7 +88,7 @@ def delete(request):
     json_str = json.dumps(result, ensure_ascii=False)
     return HttpResponse(json_str, content_type="application/json,charset=utf-8")
 
-
+#郭梦浩
 def update(request):
     if request.method == 'GET':
         id = request.GET.get('id')
@@ -123,3 +124,29 @@ def update(request):
         # 禁用ascii编码
         json_str = json.dumps(result, ensure_ascii=False)
         return HttpResponse(json_str, content_type="application/json,charset=utf-8", )
+    #郭梦浩
+
+def add_attr(request):
+    if request.method =='GET':
+        return  render(request,'product/category_attr_list.html')
+    elif request.method == 'POST':
+        #接收前台传来的数据
+        data=json.loads(request.body.decode())
+        #深拷贝
+        attr_key_dic =copy.deepcopy(data)
+        attr_key_dic.pop("attr_values")
+        attr_key_dic["is_sku"]=0
+        #Product_key表添加操作
+        attr_key_obj=ProductAttrKey.objects.create(**attr_key_dic)
+        #Product_value表添加操作，1.给category_id直接赋值2.为attr_key属性辅助(是一个ProductAttrKey类的一个实例)
+        attr_values=[]
+        for attr_value in data["attr_values"]:
+            attr_values.append(ProductAttrValue(attr_value_name=attr_value,attr_key=attr_key_obj))
+
+
+        #批量添加
+        ProductAttrValue.objects.bulk_create(attr_values)
+        result={'state':True}
+        json_str =json.dumps(result,ensure_ascii=False)
+        return HttpResponse(json_str, content_type="application/json,charset=utf-8",)
+

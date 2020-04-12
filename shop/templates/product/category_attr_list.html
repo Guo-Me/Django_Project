@@ -1,0 +1,288 @@
+{% extends 'layout.html' %}
+{% load staticfiles %}
+{% block content %}
+
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                {#          <div class="col-sm-6">#}
+                {#            <h1 class="m-0 text-dark">商品分类添加</h1>#}
+                {#          </div><!-- /.col -->#}
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">首页</a></li>
+                        <li class="breadcrumb-item "><a href="/product/category_list/">商品分类展示</a></li>
+                        <li class="breadcrumb-item active">商品属性添加</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <div class="card card-info card-outline">
+        <div class="card-header with-border">
+            <button class="btn btn-primary" style="text-align: left" onclick="openAttr()">商品属性添加</button>
+        </div>
+
+        <div class="card-body">
+            <table id="table" class="table table-bordered table-striped dataTable table-hover" role="grid"
+                   aria-describedby="example1_info" style="width: 100%;">
+                <thead>
+                <tr role="row">
+                    <th></th>
+                    <th>序号
+                    </th>
+                    <th>分类名称
+                    </th>
+                    <th>排序号
+                    </th>
+                    <th>分类图片
+                    </th>
+                    <th>操作
+
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">添加属性</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label for="attr_name" class="col-sm-2 control-label">属性名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="attr_name" value="" id="attr_name" class="form-control"
+                                   placeholder="请输入属性名称">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="enter-type" class="col-sm-2 control-label">录入方式</label>
+                        <div class="col-sm-10">
+                            <div class="row">
+                                <div class="col-sm-4 ">
+                                    <div class="icheck-primary ">
+                                        <input name="enter-type" id="r1" type="radio" checked="" value="1">
+                                        <label for="r1" style="font-weight: normal">
+                                            手动录入
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="icheck-primary">
+                                        <input name="enter-type" id="r2" type="radio" checked="" value="2">
+                                        <label for="r2" style="font-weight: normal">
+                                            下拉选择
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label for="category_ordernum" class="col-sm-2 control-label">添加值</label>
+                        <div class="col-sm-10" id="attr-values">
+                            <button class="btn btn-primary" onclick="addAttrValue()">点击添加</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="attr_order_num" class="col-sm-2 control-label">排序号</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="attr_order_num" value="" id="attr_order_num"
+                                   class="form-control"
+                                   placeholder="请输入排序号">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="btnOK">保存</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+{% endblock %}
+
+
+{% block js %}
+
+    <script>
+        function openAttr() {
+            $('#modal-default').modal()
+        }
+
+        function addAttrValue() {
+            var html =
+                '                <div class="row" style="margin-top:10px;">\n' +
+                '                    <div class="col-sm-8">\n' +
+                '                        <input type="text" class="form-control"/>\n' +
+                '                    </div>\n' +
+                '                    <div class="col-sm-4">\n' +
+                '                        <button class="btn btn-primary" id="delAttr" onclick="delAttr()">删除</button>\n' +
+                '                    </div>\n' +
+                '                </div>\n'
+
+            ;
+            $("#attr-values").append(html);
+        }
+
+        function delAttr() {
+            $("#delAttr").parent().parent().remove();
+        }
+
+
+        $(function () {
+
+            $("#btnOK").click(function () {
+                var attr_name = $("#attr_name").val();
+                var attr_order_num = $("#attr_order_num").val();
+                var enter_type = $("input[name='enter-type']:checked").val();
+                var attr_values = [];
+                $("#attr-values input").each(function () {
+                    //alert($(this).val());
+                    attr_values.push($(this).val());
+                });
+                var data = {
+                    attr_name: attr_name,
+                    attr_order_num: attr_order_num,
+                    enter_type: enter_type,
+                    attr_values: attr_values,
+                    category_id:{{ request.GET.category_id }},
+
+                };
+
+                $.ajax({
+                    url: '/product/add_attr/',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: "application/json,charset=utf-8",
+                    data: JSON.stringify(data),
+                    //当指定dataType:"json"时，浏览器会自动将返回数据自动转化为js对象
+                    success: function (data) {
+                        //$("#reset")[0].reset()
+                        if (data.state) {
+                            toastr.success("添加成功");
+                        }
+
+                    },
+                    error: function () {
+                        toastr.warning("请求失败，请联系管理员");
+                    }
+                });
+            });
+
+
+            /*
+                                $('#table').DataTable({
+
+                                    "lengthChange": false,
+                                    "searching": false,
+                                    "ordering": false,
+                                    "info": false,
+                                    "autoWidth": true,
+                                    "processing": true,
+                                    "iDisplayLength": 3,
+                                    "pagingType": "full_number",
+                                    "paging": false,
+                                    "language": {
+                                        "processing": "数据加载中...",
+                                        "lengthMenu": "显示 _Menu_ 项结果",
+                                        "zerRecords": "没有匹配结果",
+                                        "info": "显示第 START 至 END 项结果，共TOTAL 项",
+                                        "emptyTable": "表中数据为空",
+                                        "loadingRecords": "载入中..."
+
+                                    },
+                                    "serverSide": true, //开启服务端模式
+
+                                    "ajax": function (data, callback, settings) {
+                                        var param = {};
+                                        //param.pageSize=data.length;
+                                        //param.pageNum =(data.start/data.length)+1;
+                                        param.draw = data.draw;
+                                        $.ajax({
+
+                                            type: "POST",
+                                            url: "/product/category_list/",
+                                            cache: false,
+                                            data: param,
+                                            dataType: "json",
+                                            success: function (result) {
+                                                setTimeout(function () {
+                                                    callback(result)
+                                                }, 500)
+
+                                            }
+                                        });
+
+                                    },
+
+                                    'treeGrid': {
+                                        'left': 15,
+                                        'expandAll': true,
+                                        'expandIcon': '<span><i class="fa fa-plus-square"></i></span>',
+                                        'collapseIcon': '<span><i class="fa fa-minus-square"></i></span>',
+
+
+                                    },
+                                    columns: [
+                                        {
+                                            className: 'treegrid-control',
+                                            data: function (data) {
+                                                if (data.children.length > 0) {
+                                                    return '<span><i class="fa fa-plus-square"></i></span>'
+                                                }
+                                                return '';
+                                            }
+                                        },
+                                        {"data": "id"},
+                                        {"data": "category_name"},
+                                        {"data": "category_ordernum"},
+                                        {
+                                            "data": "category_img",
+                                            render: function (data, type, row, meta) {
+                                                return "<img src='" + '/upload/category_img/' + data + "  ' width=\"100px\" height=\"100px\" alt=\"\"/>";
+                                            }
+                                        },
+                                        {//
+                                            "data": "id",
+                                            render: function (data, type, row, meta) {
+                                                return '<a class="btn btn-primary" href=" ' + '/product/update/?id=' + data + '  "  alt="">编辑</a> </br>' +
+                                                    '<a id="del" class="btn btn-primary btn-danger"   onclick="del(' + data + ')"  >删除</a>'
+                                            }
+                                        }
+
+                                    ]
+
+                                })
+
+            */
+        })
+
+
+    </script>
+
+{% endblock %}
